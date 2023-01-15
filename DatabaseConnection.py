@@ -119,16 +119,15 @@ class DatabaseConnection:
                 queryString += " AND "
                 counter += 1
         fullQueryString = "DELETE FROM " + tableName + " WHERE " + queryString
-        match dictCount:
-            case 1:
-                cursor.execute(fullQueryString,
-                               (queryVariables[0],))
-            case 2:
-                cursor.execute(fullQueryString,
-                               (queryVariables[0], queryVariables[1]))
-            case 3:
-                cursor.execute(
-                    fullQueryString, (queryVariables[0], queryVariables[1], queryVariables[2]))
+        if dictCount == 1:
+            cursor.execute(fullQueryString,
+                           (queryVariables[0],))
+        elif dictCount == 2:
+            cursor.execute(fullQueryString,
+                           (queryVariables[0], queryVariables[1]))
+        elif dictCount == 3:
+            cursor.execute(
+                fullQueryString, (queryVariables[0], queryVariables[1], queryVariables[2]))
         connection.commit()
         DatabaseConnection.connection.close()
 
@@ -164,31 +163,30 @@ class DatabaseConnection:
                     queryString += " AND "
                     counter += 1
             fullQueryString = "SELECT * FROM " + tableName + " WHERE " + queryString
-            match dictCount:
-                case 2:
-                    cursor.execute(fullQueryString,
-                                   (queryVariables[0], queryVariables[1]))
-                    data = cursor.fetchall()
-                    if len(data) != 0:
-                        return data
-                    else:
-                        return False
-                case 3:
-                    cursor.execute(
-                        fullQueryString, (queryVariables[0], queryVariables[1], queryVariables[2]))
-                    data = cursor.fetchall()
-                    if len(data) != 0:
-                        return data
-                    else:
-                        return False
-                case 4:
-                    cursor.execute(
-                        fullQueryString, (queryVariables[0], queryVariables[1], queryVariables[2], queryVariables[3]))
-                    data = cursor.fetchall()
-                    if len(data) != 0:
-                        return data
-                    else:
-                        return False
+            if dictCount == 2:
+                cursor.execute(fullQueryString,
+                               (queryVariables[0], queryVariables[1]))
+                data = cursor.fetchall()
+                if len(data) != 0:
+                    return data
+                else:
+                    return False
+            elif dictCount == 3:
+                cursor.execute(
+                    fullQueryString, (queryVariables[0], queryVariables[1], queryVariables[2]))
+                data = cursor.fetchall()
+                if len(data) != 0:
+                    return data
+                else:
+                    return False
+            elif dictCount == 4:
+                cursor.execute(
+                    fullQueryString, (queryVariables[0], queryVariables[1], queryVariables[2], queryVariables[3]))
+                data = cursor.fetchall()
+                if len(data) != 0:
+                    return data
+                else:
+                    return False
         else:
             cursor.execute(
                 "SELECT * FROM " + tableName + " WHERE " + searchParameter + " = ?", (searchParameterValue,))
