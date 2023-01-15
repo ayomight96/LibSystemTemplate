@@ -1,0 +1,3 @@
+
+class StaffUser:
+    pass

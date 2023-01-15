@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jan 10 11:19:56 2023
-
-@author: ayotunde
-"""
 
 import uuid
 

@@ -4,16 +4,16 @@ Created on Tue Jan 10 11:14:49 2023
 
 @author: ayotunde
 """
-from libaryData import LibaryData
-from account import Account
-from user import Student
+from LibraryData import LibraryData
+from Account import Account
+from StudentUser import StudentUser
 from DatabaseConnection import DatabaseConnection
 
 
-class LibManSystem:
+class LibraryManagementSystem:
     def __init__(self):
-        LibaryData.loadBooks()
-        LibManSystem.landing()
+        LibraryData.loadBooks()
+        LibraryManagementSystem.landing()
 
     @staticmethod
     def authenticate(userName, password):
@@ -57,41 +57,40 @@ class LibManSystem:
         while True:
             userName = input("input User Name: ")
             password = input("input password: ")
-            userData = LibManSystem.authenticate(userName, password)
+            userData = LibraryManagementSystem.authenticate(userName, password)
             if userData != False:
                 accountData = Account.accountDataFromDatabase(userData)
-                student = Student(
+                student = StudentUser(
                     accountData['fullName'],
                     accountData['school'],
                     accountData['department'],
                     accountData
                 )
                 student.menu()
-                print("back to login")
             else:
                 print("Login failure..")
-                LibManSystem.login()
+                LibraryManagementSystem.landing()
 
     @staticmethod
     def landing():
-        print(f"""Welcome to the Library Management System Landing Page
+        print(f"""\n\nWelcome to the Library Management System Landing Page
 1. Option 1 ~Sign Up
 2. Option 2 ~Log In
-q. Return
+q. Return\n
 
 """)
         while True:
             c = input("\nSelect Option (1-2|q): ")
-            choice = {"1": LibManSystem.signUp,
-                      "2": LibManSystem.login,
-                      "q": "q"}.get(c, "invalid")
+            choice = {"1": LibraryManagementSystem.signUp,
+                      "2": LibraryManagementSystem.login,
+                      "q": "q\n"}.get(c, "invalid")
             if choice == "q":
-                print('Bye..')
+                print('Bye..\n')
                 break
-            elif choice != "invalid":
+            elif choice != "invalid\n":
                 choice()
             else:
-                print("Try again...")
+                print("Try again...\n")
 
     @staticmethod
     def signUp():
@@ -100,7 +99,7 @@ q. Return
                 "Enter 1 if you are a Staff and 2 if you are a Student: ")
             if userTypeInput == '':
                 print("You have made an invalid entry, please try again.")
-                LibManSystem.signUp()
+                LibraryManagementSystem.signUp()
             else:
                 userTypeInput = int(userTypeInput)
                 if userTypeInput == 1:
@@ -108,32 +107,32 @@ q. Return
                 elif userTypeInput == 2:
                     userType = 'Student'
                 else:
-                    print("You have made an invalid entry, please try again.")
-                    LibManSystem.signUp()
+                    print("You have made an invalid entry, please try again.\n")
+                    LibraryManagementSystem.signUp()
             userName = input("Enter User Name: ")
             fullName = input("Enter Full Name: ")
             school = input("Enter School: ")
             department = input("Enter Department: ")
             password = input("Enter password: ")
             confirmPassword = input("Confirm password: ")
-            if LibManSystem.verifyUserDetails(
+            if LibraryManagementSystem.verifyUserDetails(
                 userName,
                 fullName,
                 password,
                 confirmPassword,
                 school,
                 department
-            ) and LibManSystem.isUserNotDuplicated(
+            ) and LibraryManagementSystem.isUserNotDuplicated(
                 userName,
                 fullName,
                 password
             ):
-                print("You have succesfully signed up, you can now login")
+                print("You have succesfully signed up, you can now login\n")
                 account = Account(
                     userName,
                     fullName,
                     password,
-                    userType, 
+                    userType,
                     school,
                     department
                 )
@@ -141,10 +140,10 @@ q. Return
                     'Account',
                     account.data()
                 )
-                LibManSystem.landing()
+                LibraryManagementSystem.landing()
             else:
                 print("Sign up failure..")
-                LibManSystem.landing()
+                LibraryManagementSystem.landing()
 
 
-s = LibManSystem()
+s = LibraryManagementSystem()

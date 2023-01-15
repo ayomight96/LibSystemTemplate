@@ -38,16 +38,19 @@ class DatabaseConnection:
                         publisher text
                         )""")
             cursor.execute(
-                """create table BorrowedBooks(
-                    id integer
+                """create table BorrowedBook(
+                    id integer,
+                    borrowerId text
                     )""")
             cursor.execute(
-                """create table ReturnedBooks(
-                    id integer
+                """create table ReturnedBook(
+                    id integer,
+                    returnerId text
                     )""")
             cursor.execute(
-                """create table ReservedBooks(
-                    id integer
+                """create table ReservedBook(
+                    id integer,
+                    reserverId text
                     )""")
             connection.commit()
             self.connection.close
