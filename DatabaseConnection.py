@@ -4,85 +4,60 @@ import os
 
 class DatabaseConnection:
     def __init__(self) -> any:
-        if os.path.exists('/Users/mac/Documents/PYTHON FOLDER/LibrarySystem/View/LibrarySystem.db') != True:
+        if os.path.exists('/Users/mac/Documents/PYTHON FOLDER/LibSystemTemplate/LibSystemTemplate/LibrarySystem.db') != True:
             connection = self.openConnection()
             cursor = connection.cursor()
             cursor.execute(
-                """create table User(
-                    id text,
-                    fullName text,
-                    userName text,
-                    password text,
-                    userType text,
-                    userStation text,
-                    fine real
-                    )""")
+                """create table Account(
+                        id text,
+                        fullName text,
+                        userName text,
+                        password text,
+                        userType text,
+                        school text,
+                        department text,
+                        booksBorrowed text,
+                        booksReserved text,
+                        booksReturned text,
+                        booksLost text,
+                        fine integer
+                        )""")
             cursor.execute(
                 """create table Book(
-                    id integer,
-                    title text,
-                    authors text,
-                    averageRating real,
-                    isbn integer,
-                    isbn13 integer,
-                    languageCode text,
-                    numberOfPages integer,
-                    ratingsCount integer,
-                    textReviewsCount integer,
-                    publicationDate text,
-                    copy integer,
-                    copies integer,
-                    isReserved integer,
-                    isBookRequested integer,
-                    isBookAvailable integer,
-                    feedback text
-                    )""")
-            cursor.execute(
-                """create table BorrowedBooks(
-                    id text,
-                    bookId integer,
-                    dateBorrowed text,
-                    dueDate text
-                    )""")
-            cursor.execute(
-                """create table ReturnedBooks(
-                    id text,
-                    bookId integer,
-                    dateReturned text
-                    )""")
-            cursor.execute(
-                """create table ReservedBooks(
-                    id text,
-                    bookId integer,
-                    dateReserved text
-                    )""")
-            cursor.execute(
-                """create table LostBooks(
-                    id text,
-                    bookId integer,
-                    dateLost text
-                    )""")
+                        id integer,
+                        title text,
+                        authors text,
+                        averageRating real,
+                        isbn integer,
+                        isbn13 integer,
+                        languageCode text,
+                        numberOfPages integer,
+                        ratingsCount integer,
+                        textReviewsCount integer,
+                        publicationDate text,
+                        publisher text
+                        )""")
             connection.commit()
             self.connection.close
             print('Database and Tables Succesfully created')
 
-    #Opens connection to the Database
-    @classmethod        
+    # Opens connection to the Database
+    @classmethod
     def openConnection(self):
         connection = sqlite3.connect("LibrarySystem.db")
         self.connection = connection
         return connection
 
-    #Closes connection to the Database
+    # Closes connection to the Database
     @classmethod
     def closeConnection(self):
         self.connection.close()
 
-    #inserts data into tables
-    #takes tableName:str and data:dict as Parameters returns None 
-    @classmethod
-    def insert(self, tableName: str, data: dict):
-        connection = self.openConnection()
+    # inserts data into tables
+    # takes tableName:str and data:dict as Parameters returns None
+    @staticmethod
+    def insert(tableName: str, data: dict):
+        connection = DatabaseConnection.openConnection()
         cursor = connection.cursor()
         for key in data:
             if key == 'id':
@@ -91,14 +66,14 @@ class DatabaseConnection:
                     "insert into " + tableName + " (" + key + ")values (?)", (data[key],))
                 connection.commit()
             else:
-                self.update(tableName, data[uniqueId], data)
-        self.closeConnection()
+                DatabaseConnection.update(tableName, data[uniqueId], data)
+        DatabaseConnection.closeConnection()
 
-    #Updates data in tables
-    #takes tableName:str, uniqueId:any and data:dict as Parameters returns None 
-    @classmethod
-    def update(self, tableName: str, uniqueId: any, data: dict):
-        connection = self.openConnection()
+    # Updates data in tables
+    # takes tableName:str, uniqueId:any and data:dict as Parameters returns None
+    @staticmethod
+    def update(tableName: str, uniqueId: any, data: dict):
+        connection = DatabaseConnection.openConnection()
         cursor = connection.cursor()
         cursor.execute(
             "SELECT * FROM " + tableName + " WHERE id = :id", {"id": uniqueId})
@@ -111,13 +86,13 @@ class DatabaseConnection:
                     connection.commit()
         else:
             raise Exception("Invalid SearchParameters")
-        self.connection.close()
+        DatabaseConnection.connection.close()
 
-    #Deletes data in tables
-    #takes tableName:str and searchParameters:dict as Parameters returns None 
-    @classmethod
-    def delete(self, tableName: str, searchParameters: dict) -> bool:
-        connection = self.openConnection()
+    # Deletes data in tables
+    # takes tableName:str and searchParameters:dict as Parameters returns None
+    @staticmethod
+    def delete(tableName: str, searchParameters: dict) -> bool:
+        connection = DatabaseConnection.openConnection()
         cursor = connection.cursor()
         dictCount = len(searchParameters)
         if dictCount > 3:
@@ -143,25 +118,25 @@ class DatabaseConnection:
                 cursor.execute(
                     fullQueryString, (queryVariables[0], queryVariables[1], queryVariables[2]))
         connection.commit()
-        self.connection.close()
+        DatabaseConnection.connection.close()
 
-    #Retrieves all data in tables
-    @classmethod
-    def retrieveAll(self, tableName: str):
+    # Retrieves all data in tables
+    @staticmethod
+    def retrieveAll(tableName: str):
         data = []
         counter = 0
-        connection = self.openConnection()
+        connection = DatabaseConnection.openConnection()
         cursor = connection.cursor()
         for row in cursor.execute("select * from " + tableName):
             data.append(row)
             counter += 1
-        self.closeConnection()
+        DatabaseConnection.closeConnection()
         return data
 
-    #Retrieves all data in tables that meet specific criteria
-    @classmethod
-    def retrieve(self, tableName: str, searchParameter: any, searchParameterValue=None):
-        connection = self.openConnection()
+    # Retrieves all data in tables that meet specific criteria
+    @staticmethod
+    def retrieve(tableName: str, searchParameter: any, searchParameterValue=None):
+        connection = DatabaseConnection.openConnection()
         cursor = connection.cursor()
         if type(searchParameter) is dict:
             dictCount = len(searchParameter)
@@ -210,4 +185,18 @@ class DatabaseConnection:
                 return data
             else:
                 return False
-        self.closeConnection()
+        DatabaseConnection.closeConnection()
+
+    # Retrieves all data in tables that meet specific criteria
+    @staticmethod
+    def retrieveByTextSearch(tableName: str, searchParameterKey, searchParameterValue):
+        connection = DatabaseConnection.openConnection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT * FROM " + tableName + " WHERE " + searchParameterKey + " LIKE ?", ('%' + searchParameterValue + '%',))
+        data = cursor.fetchall()
+        DatabaseConnection.closeConnection()
+        if len(data) != 0:
+            return data
+        else:
+            return False
