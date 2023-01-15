@@ -37,6 +37,18 @@ class DatabaseConnection:
                         publicationDate text,
                         publisher text
                         )""")
+            cursor.execute(
+                """create table BorrowedBooks(
+                    id integer
+                    )""")
+            cursor.execute(
+                """create table ReturnedBooks(
+                    id integer
+                    )""")
+            cursor.execute(
+                """create table ReservedBooks(
+                    id integer
+                    )""")
             connection.commit()
             self.connection.close
             print('Database and Tables Succesfully created')

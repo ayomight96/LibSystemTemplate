@@ -48,7 +48,6 @@ Menu
 2. Option 2 ~Pay Fine
 3. Option 3 ~Add Book
 3. Option 4 ~Reserve Book
-3. Option 4 ~Return Book
 q. Return
 
 """)
@@ -57,7 +56,7 @@ q. Return
             choice = {"1": self.profile,
                       "2": self.payFine,
                       "3": self.addBook,
-                      "3": self.reserveBook,
+                      "4": self.reserveBook,
                       "q": "q"}.get(c, "invalid")
             if choice == "q":
                 print('Bye..')
@@ -150,16 +149,23 @@ Books Fine: {self.account['fine']}
                                     bookTitleChoice
                                 ))
                             if self.totalBooksAdded == 0:
-                                DatabaseConnection.update(
-                                    'Account',
-                                    self.account['id'],
-                                    {
-                                        'booksBorrowed': str(bookToBeAdded['id'])
-                                    }
-                                )
-                                self.updateAccount()
-                                self.totalBooksAdded += 1
-                                self.menu()
+                                if self.verifyIfBookHasBeenBorrowed(bookToBeAdded['id']):
+                                    print(
+                                        "This book has been borrowed by another User")
+                                    self.menu()
+                                else:
+                                    DatabaseConnection.update(
+                                        'Account',
+                                        self.account['id'],
+                                        {
+                                            'booksBorrowed': str(bookToBeAdded['id'])
+                                        }
+                                    )
+                                    self.enterBorrowedIntoDatabase(
+                                        bookToBeAdded['id'])
+                                    self.updateAccount()
+                                    self.totalBooksAdded += 1
+                                    self.menu()
                             else:
                                 booksBorrowed = self.account['booksBorrowed'].split(
                                     ',')
@@ -219,16 +225,22 @@ Books Fine: {self.account['fine']}
                                 bookTitleChoice
                             ))
                         if self.totalBooksAdded == 0:
-                            DatabaseConnection.update(
-                                'Account',
-                                self.account['id'],
-                                {
-                                    'booksBorrowed': str(bookToBeAdded['id'])
-                                }
-                            )
-                            self.updateAccount()
-                            self.totalBooksAdded += 1
-                            self.menu()
+                            if self.verifyIfBookHasBeenBorrowed(bookToBeAdded['id']):
+                                print("This book has been reserved by another User")
+                                self.menu()
+                            else:
+                                DatabaseConnection.update(
+                                    'Account',
+                                    self.account['id'],
+                                    {
+                                        'booksBorrowed': str(bookToBeAdded['id'])
+                                    }
+                                )
+                                self.enterReservedIntoDatabase(
+                                    bookToBeAdded['id'])
+                                self.updateAccount()
+                                self.totalBooksAdded += 1
+                                self.menu()
                         else:
                             booksBorrowed = self.account['booksBorrowed'].split(
                                 ',')
@@ -258,6 +270,45 @@ Books Fine: {self.account['fine']}
         print(
             'This book does not exist in our database, kindly check the title and try again.')
         self.addBook()
+
+    def verifyIfBookHasBeenBorrowed(self, id):
+        if self.verifyIfBookHasBeenReserved(id):
+            return True
+        else:
+            data = DatabaseConnection.retrieve('BorrowedBooks',
+                                               'id',
+                                               id
+                                               )
+            if data != False:
+                return True
+            else:
+                return False
+
+    def verifyIfBookHasBeenReserved(self, id):
+        data = DatabaseConnection.retrieve('ReservedBooks',
+                                           'id',
+                                           id
+                                           )
+        if data != False:
+            return True
+        else:
+            return False
+
+    def enterReservedIntoDatabase(self, id):
+        DatabaseConnection.insert(
+            'ReservedBooks',
+            {
+                'id': id
+            }
+        )
+
+    def enterBorrowedIntoDatabase(self, id):
+        DatabaseConnection.insert(
+            'BorrowedBooks',
+            {
+                'id': id
+            }
+        )
 
     def updateAccount(self):
         self.account = Account.accountDataFromDatabase(DatabaseConnection.retrieve(
