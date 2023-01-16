@@ -11,10 +11,10 @@ class Account:
         userType,
         school,
         department,
-        booksBorrowed=None,
-        booksReserved=None,
-        booksReturned=None,
-        booksLost=None,
+        borrowedBooks=None,
+        reservedBooks=None,
+        returnedBooks=None,
+        lostBooks=None,
         fine=0
     ):
         self.userName = userName
@@ -24,10 +24,10 @@ class Account:
         self.school = school
         self.department = department
         self.id = uuid.uuid4()
-        self.booksBorrowed = booksBorrowed
-        self.booksReserved = booksReserved
-        self.booksReturned = booksReturned
-        self.booksLost = booksLost
+        self.borrowedBooks = borrowedBooks
+        self.reservedBooks = reservedBooks
+        self.returnedBooks = returnedBooks
+        self.lostBooks = lostBooks
         self.fine = fine
 
     def data(self):
@@ -39,10 +39,10 @@ class Account:
             'userType': self.userType,
             'school': self.school,
             'department': self.department,
-            'booksBorrowed': self.booksBorrowed,
-            'booksReserved': self.booksReserved,
-            'booksReturned': self.booksReturned,
-            'booksLost': self.booksLost,
+            'borrowedBooks': self.borrowedBooks,
+            'reservedBooks': self.reservedBooks,
+            'returnedBooks': self.returnedBooks,
+            'lostBooks': self.lostBooks,
             'fine': self.fine
         }
 
@@ -56,9 +56,9 @@ class Account:
             'userType': data[0][4],
             'school': data[0][5],
             'department': data[0][6],
-            'booksBorrowed': data[0][7],
-            'booksReserved': data[0][8],
-            'booksReturned': data[0][9],
-            'booksLost': data[0][10],
+            'borrowedBooks': data[0][7],
+            'reservedBooks': data[0][8],
+            'returnedBooks': data[0][9],
+            'lostBooks': data[0][10],
             'fine': data[0][11],
         }

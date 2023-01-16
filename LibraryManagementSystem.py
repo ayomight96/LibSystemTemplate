@@ -8,6 +8,7 @@ from LibraryData import LibraryData
 from Account import Account
 from StudentUser import StudentUser
 from DatabaseConnection import DatabaseConnection
+from Librarian import Librarian
 
 
 class LibraryManagementSystem:

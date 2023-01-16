@@ -16,10 +16,10 @@ class DatabaseConnection:
                         userType text,
                         school text,
                         department text,
-                        booksBorrowed text,
-                        booksReserved text,
-                        booksReturned text,
-                        booksLost text,
+                        borrowedBooks text,
+                        reservedBooks text,
+                        returnedBooks text,
+                        lostBooks text,
                         fine integer
                         )""")
             cursor.execute(
@@ -40,17 +40,28 @@ class DatabaseConnection:
             cursor.execute(
                 """create table BorrowedBook(
                     id integer,
+                    bookTitle text,
                     borrowerId text
                     )""")
             cursor.execute(
                 """create table ReturnedBook(
                     id integer,
+                    bookTitle text,
                     returnerId text
                     )""")
             cursor.execute(
                 """create table ReservedBook(
                     id integer,
+                    bookTitle text,
                     reserverId text
+                    )""")
+            cursor.execute(
+                """create table Fine(
+                    id text,
+                    bookId integer,
+                    bookTitle text,
+                    fine integer,
+                    fineStatus text
                     )""")
             connection.commit()
             self.connection.close
